@@ -440,6 +440,7 @@ $.site.settings = {
     'accordion',
     'api',
     'checkbox',
+    'colorpicker',
     'dimmer',
     'dropdown',
     'embed',

@@ -83,6 +83,7 @@ module.exports = {
     // modules
     'accordion',
     'checkbox',
+    'colorpicker',
     'dimmer',
     'dropdown',
     'embed',
