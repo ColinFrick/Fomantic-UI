@@ -50,6 +50,7 @@
 @accordion  : 'default';
 @calendar   : 'default';
 @checkbox   : 'default';
+@colorpicker: 'default';
 @dimmer     : 'default';
 @dropdown   : 'default';
 @embed      : 'default';

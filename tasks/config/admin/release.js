@@ -68,6 +68,7 @@ module.exports = {
     'card',
     'calendar',
     'checkbox',
+    'colorpicker',
     'comment',
     'container',
     'dimmer',

@@ -385,6 +385,7 @@ module.exports = {
           { name: "accordion", checked: true },
           { name: "calendar", checked: true },
           { name: "checkbox", checked: true },
+          { name: "colorpicker", checked: true },
           { name: "dimmer", checked: true },
           { name: "dropdown", checked: true },
           { name: "embed", checked: true },

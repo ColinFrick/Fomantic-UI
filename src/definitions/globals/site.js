@@ -441,6 +441,7 @@ $.site.settings = {
     'api',
     'calendar',
     'checkbox',
+    'colorpicker',
     'dimmer',
     'dropdown',
     'embed',
