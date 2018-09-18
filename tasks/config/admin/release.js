@@ -94,6 +94,7 @@ module.exports = {
     'popup',
     'progress',
     'rail',
+    'range',
     'rating',
     'reset',
     'reveal',

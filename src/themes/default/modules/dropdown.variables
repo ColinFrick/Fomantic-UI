@@ -38,7 +38,7 @@
 @menuBoxShadow: @raisedShadow;
 @menuBorderRadius: @borderRadius;
 @menuTransition: opacity @defaultDuration @defaultEasing;
-@menuMinWidth: ~"calc(100% + "(@menuBorderWidth * 2)~")";
+@menuMinWidth: e(%("calc(100%% + %d)", @menuBorderWidth * 2));
 @menuZIndex: 11;
 
 /* Text */
@@ -211,7 +211,7 @@
 @selectionActiveHoverMenuBoxShadow: @selectionVisibleMenuBoxShadow;
 
 @selectionVisibleConnectingBorder: 0em;
-@selectionVisibleIconOpacity: 1;
+@selectionVisibleIconOpacity: '';
 
 /*--------------
      Search
@@ -232,7 +232,7 @@
 @searchWidescreenMaxMenuHeight: @selectionWidescreenMaxMenuHeight;
 
 /* Inline */
-@inlineIconMargin: 0em @relative7px 0em @relative3px;
+@inlineIconMargin: 0em @relative3px 0em @relative3px;
 @inlineTextColor: inherit;
 @inlineTextFontWeight: @bold;
 @inlineMenuDistance: @relative3px;
@@ -309,6 +309,10 @@
 @errorItemHoverBackground: #FFF2F2;
 @errorItemActiveBackground: #FDCFCF;
 
+/* Clearable */
+@clearableIconOpacity: 0.8;
+@clearableIconActiveOpacity: 1;
+
 /*-------------------
       Variations
 --------------------*/
@@ -316,7 +320,7 @@
 /* Scrolling */
 @scrollingMenuWidth: 100%;
 @scrollingMenuItemBorder: none;
-@scrollingMenuRightItemPadding: ~"calc("(@itemHorizontalPadding)~" + "(@scrollbarWidth)~")";
+@scrollingMenuRightItemPadding: e(%("calc(%d + %d)", @itemHorizontalPadding, @scrollbarWidth));
 
 @scrollingMobileMaxItems: 4;
 @scrollingTabletMaxItems: 6;
