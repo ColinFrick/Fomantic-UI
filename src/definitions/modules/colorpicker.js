@@ -141,7 +141,6 @@
                 onHide   : settings.onHide,
                 onHidden : onHidden
               });
-              console.log(options);
               module.popup(options);
             },
             inline: function () {
@@ -201,6 +200,9 @@
           event: {},
 
           get: {
+            color  : function () {
+              return $module.data(metadata.color) || null;
+            },
             isTouch: function () {
               try {
                 document.createEvent('TouchEvent');
@@ -211,7 +213,33 @@
             },
           },
 
-          set: {},
+          set: {
+            color       : function (color, updateInput, fireChange) {
+              updateInput = updateInput !== false;
+              fireChange  = fireChange !== false;
+              // TODO validate and sanitize color
+
+              // TODO format color into text
+              var text = '';
+              if (fireChange && settings.onChange.call(element, color, text) === false) {
+                return false;
+              }
+
+              module.set.dataKeyValue(metadata.color, color);
+              if (updateInput && $input.length) {
+                $input.val(text);
+              }
+            },
+            dataKeyValue: function (key, value) {
+              var oldValue = $module.data(key);
+              if (value !== null && value !== undefined) {
+                $module.data(key, value);
+              } else {
+                $module.removeData(key);
+              }
+              return oldValue !== value;
+            }
+          },
 
           has: {},
 
@@ -429,7 +457,7 @@
 
     // delegated event context
     // callback when color changes, return false to cancel the change
-    onChange: function (color) {
+    onChange: function (color, text) {
       return true;
     },
 
@@ -462,6 +490,10 @@
       popup       : 'UI Popup, a required component is not included in this page',
       emptyPalette: 'Palette option must be set, if type is set to \'palette\'',
       method      : 'The method you called is not defined'
+    },
+
+    metadata: {
+      color: 'color'
     },
 
     selector: {
