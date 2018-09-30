@@ -641,7 +641,7 @@
       popup      : 'ui popup',
       grid       : 'ui equal width grid',
       column     : 'column',
-      table      : 'ui compact celled table',
+      table      : 'ui compact table',
       cell       : 'link',
       label      : 'ui label',
       activeCell : 'active',
