@@ -12,8 +12,8 @@
             Theme
 *******************************/
 
-@type    : 'module';
-@element : 'colorpicker';
+@type: 'module';
+@element: 'colorpicker';
 
 @import (multiple) '../../theme.config';
 
@@ -31,3 +31,32 @@
 /*******************************
           Colorpicker
 *******************************/
+
+/*******************************
+            Table
+*******************************/
+
+.ui.colorpicker .ui.table tr {
+  height: 32px;
+}
+
+.ui.colorpicker .ui.table td {
+  width: 32px;
+  cursor: pointer;
+}
+
+.ui.colorpicker .ui.table tbody tr td.focus {
+  box-shadow: @focusBoxShadow;
+}
+
+.ui.colorpicker .ui.table.inverted tbody tr td.focus {
+  box-shadow: @focusInvertedBoxShadow;
+}
+
+.ui.colorpicker .ui.table td > .label {
+  pointer-events: none;
+  height: 24px;
+  width: 24px;
+  padding: 0;
+  border: @border;
+}

@@ -1,3 +1,9 @@
 /*******************************
           Colorpicker
 *******************************/
+
+@focusBoxShadow: inset 0 0 0 1px @focusedFormBorderColor;
+@focusInvertedBoxShadow: inset 0 0 0 1px @focusedFormBorderColor;
+
+@borderWidth: 1px;
+@border: @borderWidth solid @borderColor;

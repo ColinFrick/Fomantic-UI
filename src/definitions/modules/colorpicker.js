@@ -147,7 +147,7 @@
               if ($activator.length && !settings.inline) {
                 return;
               }
-              $container = $('<div/>').addClass(className.calendar).appendTo($module);
+              $container = $('<div/>').addClass(className.colorpicker).appendTo($module);
               if (!$input.length) {
                 $container.attr('tabindex', '0');
               }
@@ -169,10 +169,29 @@
             colorpicker: function () {
               if (settings.type === "simple") {
 
-              } else if (settings.type === "pattern") {
+              } else if (module.is.palette()) {
                 if (settings.palette === undefined || !$.isArray(settings.palette) || settings.palette.length === 0) {
                   module.error(error.emptyPalette);
                   return;
+                }
+                var paletteSize     = settings.palette.length,
+                    horizontalCount = Math.min(10, Math.ceil(Math.sqrt(paletteSize))),
+                    table           = $('<table/>').addClass(className.table).appendTo($container),
+                    tbody           = $('<tbody/>').appendTo(table),
+                    row
+                ;
+
+                for (var i = 0; i < paletteSize; i++) {
+                  if (i % horizontalCount === 0) {
+                    row = $('<tr/>').appendTo(tbody);
+                  }
+                  var cellColor = settings.palette[i];
+                  var cell      = $('<td/>').addClass(className.cell).appendTo(row);
+
+                  cell.data(metadata.color, cellColor);
+
+                  var label = $("<span/>").addClass(className.label).appendTo(cell);
+                  label.css({"background-color": cellColor});
                 }
               } else if (settings.type === "full") {
 
@@ -180,7 +199,23 @@
             }
           },
 
-          update: {},
+          update: {
+            focus: function () {
+              if (module.is.palette()) {
+                var focusColor = module.get.focusColor();
+
+                $container.find('td').each(function () {
+                  var cell      = $(this);
+                  var cellColor = cell.data(metadata.color);
+                  if (!cellColor) {
+                    return;
+                  }
+                  var focused = cellColor === focusColor;
+                  cell.toggleClass(className.focusCell, focused && (!isTouch || isTouchDown));
+                });
+              }
+            }
+          },
 
           refresh: function () {
             module.create.colorpicker();
@@ -188,22 +223,127 @@
 
           bind: {
             events: function () {
-
+              $container.on('mousedown' + eventNamespace, module.event.mousedown);
+              $container.on('touchstart' + eventNamespace, module.event.mousedown);
+              $container.on('mouseup' + eventNamespace, module.event.mouseup);
+              $container.on('touchend' + eventNamespace, module.event.mouseup);
+              $container.on('mouseover' + eventNamespace, module.event.mouseover);
+              if ($input.length) {
+                $input.on('keydown' + eventNamespace, module.event.keydown);
+              } else {
+                $container.on('keydown' + eventNamespace, module.event.keydown);
+              }
             }
           },
 
           unbind: {
             events: function () {
+              $container.off(eventNamespace);
+              if ($input.length) {
+                $input.off(eventNamespace);
+              }
             }
           },
 
-          event: {},
+          event: {
+            mouseover: function (event) {
+              var target = $(event.target);
+              var color  = target.data(metadata.color);
+              if (color) {
+                module.set.focusColor(color);
+              }
+            },
+            mousedown: function (event) {
+              if ($input.length) {
+                //prevent the mousedown on the color picker causing the input to lose focus
+                event.preventDefault();
+              }
+              var target = $(event.target);
+              var color  = target.data(metadata.color);
+              if (color) {
+                module.set.focusColor(color);
+              }
+            },
+            mouseup  : function (event) {
+              //ensure input has focus so that it receives keydown events for colorpicker navigation
+              if ($input.length) {
+                $input.focus();
+              } else {
+                $container.focus();
+              }
+              event.preventDefault();
+              event.stopPropagation();
+
+              var target = $(event.target);
+              var color  = target.data(metadata.color);
+              if (color) {
+                module.set.color(color);
+                // module.set.focusColor(color, false, true, true);
+              }
+            },
+            keydown  : function (event) {
+              if (event.keyCode === 27 || event.keyCode === 9) { //esc || tab
+                module.popup('hide');
+              }
+
+              if (module.popup('is visible')) {
+                if (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) { //arrow keys
+                  if (module.is.palette()) {
+                    var paletteSize     = settings.palette.length,
+                        horizontalCount = Math.min(10, Math.ceil(Math.sqrt(paletteSize))),
+                        focusColor      = module.get.focusColor() || module.get.color(),
+                        index           = settings.palette.indexOf(focusColor);
+
+                    var newIndex;
+                    if (event.keyCode === 37) {
+                      newIndex = module.helper.wrapAround(index - 1, paletteSize);
+                    } else if (event.keyCode === 39) {
+                      newIndex = module.helper.wrapAround(index + 1, paletteSize);
+                    } else if (event.keyCode === 38) {
+                      newIndex = index - horizontalCount;
+                      if (newIndex < 0) {
+                        newIndex = (Math.ceil(paletteSize / horizontalCount) * horizontalCount) + Math.abs(newIndex);
+                        while (newIndex >= paletteSize) {
+                          newIndex = newIndex - horizontalCount;
+                        }
+                      }
+                    } else if (event.keyCode === 40) {
+                      newIndex = index + horizontalCount;
+                      if (newIndex >= paletteSize) {
+                        newIndex = newIndex % horizontalCount;
+                      }
+                    }
+                    if (newIndex) {
+                      newIndex && module.set.focusColor(settings.palette[newIndex]);
+                    }
+                  }
+                  //enter
+                } else if (event.keyCode === 13) {
+                  var color = module.get.focusColor();
+                  if (color) {
+                    module.set.color(color);
+                  }
+                  //disable form submission:
+                  event.preventDefault();
+                  event.stopPropagation();
+                }
+              }
+
+              if (event.keyCode === 38 || event.keyCode === 40) { //arrow-up || arrow-down
+                event.preventDefault(); //don't scroll
+                module.popup('show');
+              }
+            }
+          },
 
           get: {
-            color  : function () {
+            color     : function () {
               return $module.data(metadata.color) || null;
             },
-            isTouch: function () {
+            focusColor: function () {
+              return $module.data(metadata.focusColor) || null;
+            },
+            isTouch   : function () {
               try {
                 document.createEvent('TouchEvent');
                 return true;
@@ -213,6 +353,14 @@
             },
           },
 
+          has: {},
+
+          is: {
+            palette: function () {
+              return settings.type === "palette";
+            }
+          },
+
           set: {
             color       : function (color, updateInput, fireChange) {
               updateInput = updateInput !== false;
@@ -220,7 +368,7 @@
               // TODO validate and sanitize color
 
               // TODO format color into text
-              var text = '';
+              var text = color;
               if (fireChange && settings.onChange.call(element, color, text) === false) {
                 return false;
               }
@@ -228,6 +376,12 @@
               module.set.dataKeyValue(metadata.color, color);
               if (updateInput && $input.length) {
                 $input.val(text);
+              }
+            },
+            focusColor  : function (color) {
+              // TODO validate and sanitize color
+              if (module.set.dataKeyValue(metadata.focusColor, color)) {
+                module.update.focus();
               }
             },
             dataKeyValue: function (key, value) {
@@ -241,7 +395,11 @@
             }
           },
 
-          has: {},
+          helper: {
+            wrapAround: function (number, bound) {
+              return (number % bound + bound) % bound;
+            }
+          },
 
           popup: function () {
             return $activator.popup.apply($activator, arguments);
@@ -483,7 +641,11 @@
       popup      : 'ui popup',
       grid       : 'ui equal width grid',
       column     : 'column',
-      table      : 'ui celled center aligned unstackable table'
+      table      : 'ui compact celled table',
+      cell       : 'link',
+      label      : 'ui label',
+      activeCell : 'active',
+      focusCell  : 'focus'
     },
 
     error: {
@@ -493,7 +655,8 @@
     },
 
     metadata: {
-      color: 'color'
+      color     : 'color',
+      focusColor: 'focusColor'
     },
 
     selector: {
