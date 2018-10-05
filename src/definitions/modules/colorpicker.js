@@ -186,12 +186,18 @@
                     row = $('<tr/>').appendTo(tbody);
                   }
                   var cellColor = settings.palette[i];
-                  var cell      = $('<td/>').addClass(className.cell).appendTo(row);
+                  if (cellColor.startsWith("#")) {
+                    cellColor = module.helper.hexToObject(cellColor);
+                  } else {
+                    // log unsupported color
+                  }
 
-                  cell.data(metadata.color, cellColor);
-
-                  var label = $("<span/>").addClass(className.label).appendTo(cell);
-                  label.css({"background-color": cellColor});
+                  if (cellColor) {
+                    var cell = $('<td/>').addClass(className.cell).appendTo(row);
+                    cell.data(metadata.color, cellColor);
+                    var label = $("<span/>").addClass(className.label).appendTo(cell);
+                    label.css({"background-color": module.formatter.hex(cellColor)});
+                  }
                 }
               } else if (settings.type === "full") {
 
@@ -368,7 +374,15 @@
               // TODO validate and sanitize color
 
               // TODO format color into text
-              var text = color;
+              var text;
+              if ($.isFunction(settings.format)) {
+                text = settings.format.call(element, color);
+              } else if (typeof settings.format === 'string' && module.formatter[settings.format]) {
+                text = module.formatter[settings.format].call(element, color);
+              } else {
+                // log error = unsupported formatter
+              }
+
               if (fireChange && settings.onChange.call(element, color, text) === false) {
                 return false;
               }
@@ -398,6 +412,43 @@
           helper: {
             wrapAround: function (number, bound) {
               return (number % bound + bound) % bound;
+            },
+
+            hexToObject: function (hex, alpha) {
+              alpha = alpha === undefined ? 1 : alpha;
+
+              var regexp = /^#([A-Fa-f0-9]{6}|[A-Fa-f0-9]{3})$/;
+              var result = regexp.exec(hex);
+
+              if (result) {
+                var code = result[1];
+                var len  = code.length / 3;
+                var r    = parseInt(code.substring(0, len), 16);
+                var g    = parseInt(code.substring(len, len * 2), 16);
+                var b    = parseInt(code.substring(len * 2), 16);
+                return {
+                  r: r,
+                  g: g,
+                  b: b,
+                  a: alpha
+                };
+              }
+              return null;
+            }
+          },
+
+          formatter: {
+            hex : function (color) {
+              return "#" +
+                color.r.toString(16).padStart(2, '0') +
+                color.g.toString(16).padStart(2, '0') +
+                color.b.toString(16).padStart(2, '0');
+            },
+            rgb : function (color) {
+              return "rgba(" + color.r + ", " + color.g + ", " + color.b + ")";
+            },
+            rgba: function (color) {
+              return "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
             }
           },
 
@@ -604,6 +655,8 @@
     inline : false,    // create the colorpicker inline instead of inside a popup
     palette: [],       // if picker type is 'palette' define all available colors here
     on     : null,     // when to show the popup (defaults to 'focus' for input, 'click' for others)
+    format : 'hex',     // format of the output color
+                        // supported: 'hex', 'rgb', 'rgba', function(color) {}
 
     // popup options ('popup', 'on', 'hoverable', and show/hide callbacks are overridden)
     popupOptions: {
