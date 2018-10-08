@@ -169,41 +169,72 @@
 
           create: {
             colorpicker: function () {
-              if (module.is.grid()) {
-                var colors = module.get.colors();
-                if (colors === undefined || !$.isArray(colors) || colors.length === 0) {
-                  module.error(error.emptyColors);
-                  return;
-                }
-                var colorCount      = colors.length,
-                    horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
-                    container       = $('<div/>').appendTo($container),
-                    table           = $('<table/>').addClass(className.table).appendTo(container),
-                    tbody           = $('<tbody/>').appendTo(table),
-                    row
-                ;
-
-                for (var i = 0; i < colorCount; i++) {
-                  if (i % horizontalCount === 0) {
-                    row = $('<tr/>').appendTo(tbody);
-                  }
-                  var cell = $('<td/>').addClass(className.cell).appendTo(row);
-                  cell.data(metadata.color, colors[i]);
-                  var label = $("<span/>").addClass(className.label).appendTo(cell);
-                  label.css({"background-color": module.formatter.hex(colors[i])});
-                }
+              if (module.is.list()) {
+                module.create.list();
+              } else if (module.is.grid()) {
+                module.create.grid();
               } else {
                 module.error(error.unsupportedType);
+              }
+            },
+
+            list: function () {
+              var colors = module.get.colors();
+              if (colors === undefined || !$.isArray(colors) || colors.length === 0) {
+                module.error(error.emptyColors);
+                return;
+              }
+
+              var colorCount = colors.length,
+                  container  = $('<div/>').appendTo($container),
+                  menu       = $('<div/>').addClass(className.menu).appendTo(container)
+              ;
+
+              for (var i = 0; i < colorCount; i++) {
+                var cellColor = colors[i];
+                var item      = $('<div>').addClass(className.item).addClass(className.cell).appendTo(menu);
+                item.data(metadata.color, cellColor);
+                item.css({"background-color": module.formatter.hex(cellColor)});
+                var text = module.formatter.hex(cellColor);
+                if (cellColor.name) {
+                  text = cellColor.name + " - " + text;
+                }
+                item.text(text);
+              }
+            },
+
+            grid: function () {
+              var colors = module.get.colors();
+              if (colors === undefined || !$.isArray(colors) || colors.length === 0) {
+                module.error(error.emptyColors);
+                return;
+              }
+              var colorCount      = colors.length,
+                  horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
+                  container       = $('<div/>').appendTo($container),
+                  table           = $('<table/>').addClass(className.table).appendTo(container),
+                  tbody           = $('<tbody/>').appendTo(table),
+                  row
+              ;
+
+              for (var i = 0; i < colorCount; i++) {
+                if (i % horizontalCount === 0) {
+                  row = $('<tr/>').appendTo(tbody);
+                }
+                var cell = $('<td/>').addClass(className.cell).appendTo(row);
+                cell.data(metadata.color, colors[i]);
+                var label = $("<span/>").addClass(className.label).appendTo(cell);
+                label.css({"background-color": module.formatter.hex(colors[i])});
               }
             }
           },
 
           update: {
             focus: function () {
-              if (module.is.grid()) {
+              if (module.is.list() || module.is.grid()) {
                 var focusColor = module.get.focusColor();
 
-                $container.find('td').each(function () {
+                $container.find(settings.selector.cell).each(function () {
                   var cell      = $(this);
                   var cellColor = cell.data(metadata.color);
                   if (!cellColor) {
@@ -296,14 +327,21 @@
 
               if (module.popup('is visible')) {
                 if (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) { //arrow keys
-                  if (module.is.grid()) {
-                    var colors          = module.get.colors(),
-                        colorCount      = colors.length,
-                        horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
-                        focusColor      = module.get.focusColor() || module.get.color(),
-                        index           = colors.indexOf(focusColor);
+                  var colors     = module.get.colors(),
+                      colorCount = colors.length,
+                      focusColor = module.get.focusColor() || module.get.color(),
+                      index      = colors.indexOf(focusColor),
+                      newIndex;
 
-                    var newIndex;
+                  if (module.is.list()) {
+                    if (event.keyCode === 38) {
+                      newIndex = module.helper.wrapAround(index - 1, colorCount);
+                    } else if (event.keyCode === 40) {
+                      newIndex = module.helper.wrapAround(index + 1, colorCount);
+                    }
+                  } else if (module.is.grid()) {
+                    var horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount)));
+
                     if (event.keyCode === 37) {
                       newIndex = module.helper.wrapAround(index - 1, colorCount);
                     } else if (event.keyCode === 39) {
@@ -322,9 +360,9 @@
                         newIndex = newIndex % horizontalCount;
                       }
                     }
-                    if (newIndex !== undefined) {
-                      module.set.focusColor(colors[newIndex]);
-                    }
+                  }
+                  if (newIndex !== undefined) {
+                    module.set.focusColor(colors[newIndex]);
                   }
                   //enter
                 } else if (event.keyCode === 13) {
@@ -389,6 +427,9 @@
           has: {},
 
           is: {
+            list: function () {
+              return settings.type === "list";
+            },
             grid: function () {
               return settings.type === "grid";
             }
@@ -466,10 +507,10 @@
 
           formatter: {
             hex : function (color) {
-              return "#" +
+              return ("#" +
                 color.r.toString(16).padStart(2, '0') +
                 color.g.toString(16).padStart(2, '0') +
-                color.b.toString(16).padStart(2, '0');
+                color.b.toString(16).padStart(2, '0')).toUpperCase();
             },
             rgb : function (color) {
               return "rgba(" + color.r + ", " + color.g + ", " + color.b + ")";
@@ -721,6 +762,8 @@
       popup      : 'ui popup',
       grid       : 'ui equal width grid',
       column     : 'column',
+      menu       : 'ui fluid vertical menu',
+      item       : 'item',
       table      : 'ui compact table',
       cell       : 'link',
       label      : 'ui label',
@@ -743,7 +786,8 @@
     selector: {
       popup    : '.ui.popup',
       input    : 'input',
-      activator: 'input'
+      activator: 'input',
+      cell     : '.link'
     }
 
   };

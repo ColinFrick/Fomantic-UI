@@ -30,6 +30,7 @@
 .ui.colorpicker .ui.popup > div {
   max-height: 500px;
   overflow-y: scroll;
+  overflow-x: hidden;
 }
 
 /*******************************
@@ -65,4 +66,20 @@
   -webkit-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
   -moz-box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
   box-shadow: inset 0px 0px 2px 0px rgba(0, 0, 0, 0.2);
+}
+
+/*******************************
+            Menu
+*******************************/
+
+.ui.colorpicker .ui.menu .item {
+  white-space: nowrap;
+}
+
+.ui.colorpicker .ui.menu .item.focus {
+  box-shadow: @focusBoxShadow;
+}
+
+.ui.colorpicker .ui.menu .item.focus {
+  box-shadow: @focusInvertedBoxShadow;
 }
