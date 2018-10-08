@@ -60,7 +60,9 @@
 
           isTouch,
           isTouchDown     = false,
-          module
+          module,
+
+          colors          = undefined
         ;
 
         module = {
@@ -167,47 +169,37 @@
 
           create: {
             colorpicker: function () {
-              if (settings.type === "simple") {
-
-              } else if (module.is.palette()) {
-                if (settings.palette === undefined || !$.isArray(settings.palette) || settings.palette.length === 0) {
-                  module.error(error.emptyPalette);
+              if (module.is.grid()) {
+                var colors = module.get.colors();
+                if (colors === undefined || !$.isArray(colors) || colors.length === 0) {
+                  module.error(error.emptyColors);
                   return;
                 }
-                var paletteSize     = settings.palette.length,
-                    horizontalCount = Math.min(10, Math.ceil(Math.sqrt(paletteSize))),
+                var colorCount      = colors.length,
+                    horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
                     table           = $('<table/>').addClass(className.table).appendTo($container),
                     tbody           = $('<tbody/>').appendTo(table),
                     row
                 ;
 
-                for (var i = 0; i < paletteSize; i++) {
+                for (var i = 0; i < colorCount; i++) {
                   if (i % horizontalCount === 0) {
                     row = $('<tr/>').appendTo(tbody);
                   }
-                  var cellColor = settings.palette[i];
-                  if (cellColor.startsWith("#")) {
-                    cellColor = module.helper.hexToObject(cellColor);
-                  } else {
-                    // log unsupported color
-                  }
-
-                  if (cellColor) {
-                    var cell = $('<td/>').addClass(className.cell).appendTo(row);
-                    cell.data(metadata.color, cellColor);
-                    var label = $("<span/>").addClass(className.label).appendTo(cell);
-                    label.css({"background-color": module.formatter.hex(cellColor)});
-                  }
+                  var cell = $('<td/>').addClass(className.cell).appendTo(row);
+                  cell.data(metadata.color, colors[i]);
+                  var label = $("<span/>").addClass(className.label).appendTo(cell);
+                  label.css({"background-color": module.formatter.hex(colors[i])});
                 }
-              } else if (settings.type === "full") {
-
+              } else {
+                module.error(error.unsupportedType);
               }
             }
           },
 
           update: {
             focus: function () {
-              if (module.is.palette()) {
+              if (module.is.grid()) {
                 var focusColor = module.get.focusColor();
 
                 $container.find('td').each(function () {
@@ -294,33 +286,34 @@
 
               if (module.popup('is visible')) {
                 if (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) { //arrow keys
-                  if (module.is.palette()) {
-                    var paletteSize     = settings.palette.length,
-                        horizontalCount = Math.min(10, Math.ceil(Math.sqrt(paletteSize))),
+                  if (module.is.grid()) {
+                    var colors          = module.get.colors(),
+                        colorCount      = colors.length,
+                        horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
                         focusColor      = module.get.focusColor() || module.get.color(),
-                        index           = settings.palette.indexOf(focusColor);
+                        index           = colors.indexOf(focusColor);
 
                     var newIndex;
                     if (event.keyCode === 37) {
-                      newIndex = module.helper.wrapAround(index - 1, paletteSize);
+                      newIndex = module.helper.wrapAround(index - 1, colorCount);
                     } else if (event.keyCode === 39) {
-                      newIndex = module.helper.wrapAround(index + 1, paletteSize);
+                      newIndex = module.helper.wrapAround(index + 1, colorCount);
                     } else if (event.keyCode === 38) {
                       newIndex = index - horizontalCount;
                       if (newIndex < 0) {
-                        newIndex = (Math.ceil(paletteSize / horizontalCount) * horizontalCount) + Math.abs(newIndex);
-                        while (newIndex >= paletteSize) {
+                        newIndex = (Math.ceil(colorCount / horizontalCount) * horizontalCount) + Math.abs(newIndex);
+                        while (newIndex >= colorCount) {
                           newIndex = newIndex - horizontalCount;
                         }
                       }
                     } else if (event.keyCode === 40) {
                       newIndex = index + horizontalCount;
-                      if (newIndex >= paletteSize) {
+                      if (newIndex >= colorCount) {
                         newIndex = newIndex % horizontalCount;
                       }
                     }
-                    if (newIndex) {
-                      newIndex && module.set.focusColor(settings.palette[newIndex]);
+                    if (newIndex !== undefined) {
+                      module.set.focusColor(colors[newIndex]);
                     }
                   }
                   //enter
@@ -357,13 +350,37 @@
                 return false;
               }
             },
+            colors    : function () {
+              if (colors === undefined) {
+                colors = [];
+
+                var colorCount = settings.colors.length;
+                for (var i = 0; i < colorCount; i++) {
+                  var cellColor = settings.colors[i];
+                  if (cellColor.hasOwnProperty("r") && cellColor.hasOwnProperty("g") && cellColor.hasOwnProperty("b")) {
+                    cellColor = {
+                      name: cellColor.name || "",
+                      r   : parseInt(cellColor.r),
+                      g   : parseInt(cellColor.g),
+                      b   : parseInt(cellColor.b)
+                    };
+                  } else if ((typeof cellColor === 'string' || cellColor instanceof String) && cellColor.startsWith("#")) {
+                    cellColor = module.helper.hexToObject(cellColor);
+                  } else {
+                    // log unsupported color
+                  }
+                  colors.push(cellColor);
+                }
+              }
+              return colors;
+            }
           },
 
           has: {},
 
           is: {
-            palette: function () {
-              return settings.type === "palette";
+            grid: function () {
+              return settings.type === "grid";
             }
           },
 
@@ -448,7 +465,7 @@
               return "rgba(" + color.r + ", " + color.g + ", " + color.b + ")";
             },
             rgba: function (color) {
-              return "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + color.a + ")";
+              return "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + (color.a || 0) + ")";
             }
           },
 
@@ -650,13 +667,13 @@
     verbose    : true,
     performance: true,
 
-    type   : 'simple', // picker type, can be 'simple', 'full', or 'palette'
-                       // if picker type is 'palette' the palette option must be set
-    inline : false,    // create the colorpicker inline instead of inside a popup
-    palette: [],       // if picker type is 'palette' define all available colors here
-    on     : null,     // when to show the popup (defaults to 'focus' for input, 'click' for others)
-    format : 'hex',     // format of the output color
-                        // supported: 'hex', 'rgb', 'rgba', function(color) {}
+    type  : 'grid', // picker type, can be 'list', 'grid', or 'full'
+                    // if picker type is 'list' or 'grid' the colors option must be set
+    inline: false,  // create the colorpicker inline instead of inside a popup
+    colors: [],      // if picker type is 'colors' define all available colors here
+    on    : null,   // when to show the popup (defaults to 'focus' for input, 'click' for others)
+    format: 'hex',  // format of the output color
+                    // supported: 'hex', 'rgb', 'rgba', function(color) {}
 
     // popup options ('popup', 'on', 'hoverable', and show/hide callbacks are overridden)
     popupOptions: {
@@ -702,9 +719,10 @@
     },
 
     error: {
-      popup       : 'UI Popup, a required component is not included in this page',
-      emptyPalette: 'Palette option must be set, if type is set to \'palette\'',
-      method      : 'The method you called is not defined'
+      popup          : 'UI Popup, a required component is not included in this page',
+      emptyColors    : 'Colors option must be set, if type is set to \'grid\' or \'list\'',
+      unsupportedType: 'Unsupported type defined',
+      method         : 'The method you called is not defined'
     },
 
     metadata: {
