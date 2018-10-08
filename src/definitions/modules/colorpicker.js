@@ -211,6 +211,15 @@
                   }
                   var focused = cellColor === focusColor;
                   cell.toggleClass(className.focusCell, focused && (!isTouch || isTouchDown));
+                  if (focused) {
+                    // check if is not in view
+                    var rect       = this.getBoundingClientRect(),
+                        parentRect = $container[0].firstChild.getBoundingClientRect();
+
+                    if (rect.top - parentRect.top < 0 || rect.bottom > parentRect.bottom) {
+                      this.scrollIntoView();
+                    }
+                  }
                 });
               }
             }
