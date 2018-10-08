@@ -177,7 +177,8 @@
                 }
                 var colorCount      = colors.length,
                     horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
-                    table           = $('<table/>').addClass(className.table).appendTo($container),
+                    container       = $('<div/>').appendTo($container),
+                    table           = $('<table/>').addClass(className.table).appendTo(container),
                     tbody           = $('<tbody/>').appendTo(table),
                     row
                 ;
