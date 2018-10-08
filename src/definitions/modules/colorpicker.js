@@ -195,11 +195,14 @@
                 var item      = $('<div>').addClass(className.item).addClass(className.cell).appendTo(menu);
                 item.data(metadata.color, cellColor);
                 item.css({"background-color": module.formatter.hex(cellColor)});
-                var text = module.formatter.hex(cellColor);
-                if (cellColor.name) {
-                  text = cellColor.name + " - " + text;
+                if (module.helper.toHSL(cellColor).l < 0.45) {
+                  item.css({"color": "white"});
                 }
-                item.text(text);
+
+                if (cellColor.name) {
+                  $("<span/>").addClass("color name").text(cellColor.name).appendTo(item);
+                }
+                $("<span/>").addClass("color hex").text(module.formatter.hex(cellColor)).prependTo(item);
               }
             },
 
@@ -314,6 +317,9 @@
               event.stopPropagation();
 
               var target = $(event.target);
+              if(!target.data(metadata.color)) {
+                target = target.parent();
+              }
               var color  = target.data(metadata.color);
               if (color) {
                 module.set.color(color);
@@ -502,6 +508,37 @@
                 };
               }
               return null;
+            },
+
+            toHSL: function (color) {
+              var r = color.r,
+                  g = color.g,
+                  b = color.b;
+
+              r /= 255, g /= 255, b /= 255;
+              var max     = Math.max(r, g, b), min = Math.min(r, g, b);
+              var h, s, l = (max + min) / 2;
+
+              if (max === min) {
+                h = s = 0; // achromatic
+              } else {
+                var d = max - min;
+                s     = l > 0.5 ? d / (2 - max - min) : d / (max + min);
+                switch (max) {
+                  case r:
+                    h = (g - b) / d + (g < b ? 6 : 0);
+                    break;
+                  case g:
+                    h = (b - r) / d + 2;
+                    break;
+                  case b:
+                    h = (r - g) / d + 4;
+                    break;
+                }
+                h /= 6;
+              }
+
+              return {h: h, s: s, l: l};
             }
           },
 
