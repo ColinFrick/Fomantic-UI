@@ -27,7 +27,7 @@
   user-select: none;
 }
 
-.ui.colorpicker .ui.popup > div {
+.ui.colorpicker .ui.popup > .scrolling.container {
   max-height: 500px;
   overflow-y: scroll;
   overflow-x: hidden;
@@ -38,27 +38,35 @@
 *******************************/
 
 /*******************************
+          Hue Filter
+********************************/
+
+.ui.colorpicker .ui.popup .hue.selection {
+  min-width: 336px;
+}
+
+/*******************************
             Table
 *******************************/
 
-.ui.colorpicker .ui.table tr {
+.ui.colorpicker .scrolling.container .ui.table tr {
   height: 32px;
 }
 
-.ui.colorpicker .ui.table td {
+.ui.colorpicker .scrolling.container .ui.table td {
   width: 32px;
   cursor: pointer;
 }
 
-.ui.colorpicker .ui.table tbody tr td.focus {
+.ui.colorpicker .scrolling.container .ui.table tbody tr td.focus {
   box-shadow: @focusBoxShadow;
 }
 
-.ui.colorpicker .ui.table.inverted tbody tr td.focus {
+.ui.colorpicker .scrolling.container .ui.table.inverted tbody tr td.focus {
   box-shadow: @focusInvertedBoxShadow;
 }
 
-.ui.colorpicker .ui.table td > .label {
+.ui.colorpicker .scrolling.container .ui.table td > .label {
   pointer-events: none;
   height: 24px;
   width: 24px;
@@ -72,24 +80,24 @@
             Menu
 *******************************/
 
-.ui.colorpicker .ui.menu .item {
+.ui.colorpicker .scrolling.container .ui.menu .item {
   white-space: nowrap;
 }
 
-.ui.colorpicker .ui.menu .item.focus {
+.ui.colorpicker .scrolling.container .ui.menu .item.focus {
   box-shadow: @focusBoxShadow;
 }
 
-.ui.colorpicker .ui.menu .item.focus {
+.ui.colorpicker .scrolling.container .ui.menu .item.focus {
   box-shadow: @focusInvertedBoxShadow;
 }
 
-.ui.colorpicker .ui.menu .color.hex {
+.ui.colorpicker .scrolling.container .ui.menu .color.hex {
   font-family: Consolas, Menlo, Monaco, monospace;
   text-align: right;
   float: right;
 }
 
-.ui.colorpicker .ui.menu .color.name {
+.ui.colorpicker .scrolling.container .ui.menu .color.name {
   font-weight: bold;
 }

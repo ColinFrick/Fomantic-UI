@@ -62,6 +62,7 @@
           isTouchDown     = false,
           module,
 
+          allColors       = undefined,
           colors          = undefined
         ;
 
@@ -169,6 +170,32 @@
 
           create: {
             colorpicker: function () {
+              $container.empty();
+
+              if (module.is.list() || module.is.grid()) {
+                var hueSelection = $('<div/>').addClass('hue selection').addClass('ui twelve item menu').appendTo($container);
+                var hues         = [
+                  {r: 255, g: 0, b: 0},
+                  {r: 255, g: 128, b: 0},
+                  {r: 255, g: 255, b: 0},
+                  {r: 128, g: 255, b: 0},
+                  {r: 0, g: 255, b: 0},
+                  {r: 0, g: 255, b: 128},
+                  {r: 0, g: 255, b: 255},
+                  {r: 0, g: 128, b: 255},
+                  {r: 0, g: 0, b: 255},
+                  {r: 128, g: 0, b: 255},
+                  {r: 255, g: 0, b: 255},
+                  {r: 255, g: 0, b: 128},
+                ];
+
+                hues.forEach(function (value) {
+                  var hue = $('<div/>)').addClass('link item').appendTo(hueSelection);
+                  hue.css({"background-color": module.formatter.hex(value)});
+                  hue.data(metadata.hueFilter, module.helper.toHSL(value).h);
+                });
+              }
+
               if (module.is.list()) {
                 module.create.list();
               } else if (module.is.grid()) {
@@ -186,7 +213,7 @@
               }
 
               var colorCount = colors.length,
-                  container  = $('<div/>').appendTo($container),
+                  container  = $('<div/>').addClass(className.container).appendTo($container),
                   menu       = $('<div/>').addClass(className.menu).appendTo(container)
               ;
 
@@ -195,7 +222,7 @@
                 var item      = $('<div>').addClass(className.item).addClass(className.cell).appendTo(menu);
                 item.data(metadata.color, cellColor);
                 item.css({"background-color": module.formatter.hex(cellColor)});
-                if (module.helper.toHSL(cellColor).l < 0.45) {
+                if (cellColor.l < 0.45) {
                   item.css({"color": "white"});
                 }
 
@@ -214,7 +241,7 @@
               }
               var colorCount      = colors.length,
                   horizontalCount = Math.min(10, Math.ceil(Math.sqrt(colorCount))),
-                  container       = $('<div/>').appendTo($container),
+                  container       = $('<div/>').addClass(className.container).appendTo($container),
                   table           = $('<table/>').addClass(className.table).appendTo(container),
                   tbody           = $('<tbody/>').appendTo(table),
                   row
@@ -248,7 +275,7 @@
                   if (focused) {
                     // check if is not in view
                     var rect       = this.getBoundingClientRect(),
-                        parentRect = $container[0].firstChild.getBoundingClientRect();
+                        parentRect = $container.children('.scrolling.container')[0].getBoundingClientRect();
 
                     if (rect.top - parentRect.top < 0 || rect.bottom > parentRect.bottom) {
                       this.scrollIntoView();
@@ -316,14 +343,19 @@
               event.preventDefault();
               event.stopPropagation();
 
-              var target = $(event.target);
-              if(!target.data(metadata.color)) {
+              var originalTarget = $(event.target),
+                  target         = originalTarget;
+              if (!target.data(metadata.color)) {
                 target = target.parent();
               }
-              var color  = target.data(metadata.color);
+              var color = target.data(metadata.color);
               if (color) {
                 module.set.color(color);
-                // module.set.focusColor(color, false, true, true);
+              }
+
+              var hueFilter = originalTarget.data(metadata.hueFilter);
+              if (hueFilter !== undefined) {
+                module.set.hueFilter(hueFilter);
               }
             },
             keydown  : function (event) {
@@ -404,9 +436,12 @@
                 return false;
               }
             },
+            hueFilter : function () {
+              return $module.data(metadata.hueFilter) !== undefined ? $module.data(metadata.hueFilter) : null;
+            },
             colors    : function () {
-              if (colors === undefined) {
-                colors = [];
+              if (allColors === undefined) {
+                allColors = [];
 
                 var colorCount = settings.colors.length;
                 for (var i = 0; i < colorCount; i++) {
@@ -422,10 +457,24 @@
                     cellColor = module.helper.hexToObject(cellColor);
                   } else {
                     // log unsupported color
+                    cellColor = undefined;
                   }
-                  colors.push(cellColor);
+                  if (cellColor) {
+                    allColors.push($.extend({}, cellColor, module.helper.toHSL(cellColor)));
+                  }
                 }
               }
+
+              if (module.get.hueFilter() !== null) {
+                var targetHue = module.get.hueFilter();
+                colors        = allColors.filter(function (color) {
+                  var lowerBounds = module.helper.wrapAround(targetHue - 15 / 360, 1), upperBounds = module.helper.wrapAround(targetHue + 15 / 360, 1);
+                  return lowerBounds > upperBounds ? color.h > lowerBounds || color.h < upperBounds : color.h > lowerBounds && color.h < upperBounds;
+                });
+              } else {
+                colors = allColors;
+              }
+
               return colors;
             }
           },
@@ -472,6 +521,12 @@
                 module.update.focus();
               }
             },
+            hueFilter   : function (hue) {
+              if (module.set.dataKeyValue(metadata.hueFilter, hue)) {
+                module.reset.colors();
+                module.create.colorpicker();
+              }
+            },
             dataKeyValue: function (key, value) {
               var oldValue = $module.data(key);
               if (value !== null && value !== undefined) {
@@ -480,6 +535,12 @@
                 $module.removeData(key);
               }
               return oldValue !== value;
+            }
+          },
+
+          reset: {
+            colors: function () {
+              colors = undefined;
             }
           },
 
@@ -797,10 +858,11 @@
       colorpicker: 'colorpicker',
       active     : 'active',
       popup      : 'ui popup',
-      grid       : 'ui equal width grid',
+      grid       : 'ui equal width padded grid',
       column     : 'column',
       menu       : 'ui fluid vertical menu',
       item       : 'item',
+      container  : 'scrolling container',
       table      : 'ui compact table',
       cell       : 'link',
       label      : 'ui label',
@@ -817,7 +879,8 @@
 
     metadata: {
       color     : 'color',
-      focusColor: 'focusColor'
+      focusColor: 'focusColor',
+      hueFilter : 'hueFilter'
     },
 
     selector: {
