@@ -52,6 +52,7 @@
 
           $module         = $(this),
           $input          = $module.find(selector.input),
+          $icon           = $module.find(selector.icon),
           $container      = $module.find(selector.popup),
           $activator      = $module.find(selector.activator),
 
@@ -172,37 +173,44 @@
             colorpicker: function () {
               $container.empty();
 
-              if (module.is.list() || module.is.grid()) {
-                var hueSelection = $('<div/>').addClass('hue selection').addClass('ui twelve item menu').appendTo($container);
-                var hues         = [
-                  {r: 255, g: 0, b: 0},
-                  {r: 255, g: 128, b: 0},
-                  {r: 255, g: 255, b: 0},
-                  {r: 128, g: 255, b: 0},
-                  {r: 0, g: 255, b: 0},
-                  {r: 0, g: 255, b: 128},
-                  {r: 0, g: 255, b: 255},
-                  {r: 0, g: 128, b: 255},
-                  {r: 0, g: 0, b: 255},
-                  {r: 128, g: 0, b: 255},
-                  {r: 255, g: 0, b: 255},
-                  {r: 255, g: 0, b: 128},
-                ];
-
-                hues.forEach(function (value) {
-                  var hue = $('<div/>)').addClass('link item').appendTo(hueSelection);
-                  hue.css({"background-color": module.formatter.hex(value)});
-                  hue.data(metadata.hueFilter, module.helper.toHSL(value).h);
-                });
-              }
-
+              // TODO remove before push
+              $module.data(metadata.hueFilter, 0);
+              $module.data(metadata.color, {r: 255, g: 0, b: 0, a: 1});
               if (module.is.list()) {
+                module.create.hueFilter();
                 module.create.list();
               } else if (module.is.grid()) {
+                module.create.hueFilter();
                 module.create.grid();
+              } else if (module.is.full()) {
+                module.create.full();
               } else {
                 module.error(error.unsupportedType);
               }
+            },
+
+            hueFilter: function () {
+              var hueSelection = $('<div/>').addClass('hue filter').addClass('ui twelve item menu').appendTo($container);
+              var hues         = [
+                {r: 255, g: 0, b: 0},
+                {r: 255, g: 128, b: 0},
+                {r: 255, g: 255, b: 0},
+                {r: 128, g: 255, b: 0},
+                {r: 0, g: 255, b: 0},
+                {r: 0, g: 255, b: 128},
+                {r: 0, g: 255, b: 255},
+                {r: 0, g: 128, b: 255},
+                {r: 0, g: 0, b: 255},
+                {r: 128, g: 0, b: 255},
+                {r: 255, g: 0, b: 255},
+                {r: 255, g: 0, b: 128},
+              ];
+
+              hues.forEach(function (value) {
+                var hue = $('<div/>)').addClass('link item').appendTo(hueSelection);
+                hue.css({"background-color": module.formatter.hex(value)});
+                hue.data(metadata.hueFilter, module.helper.rgbToHSL(value).h);
+              });
             },
 
             list: function () {
@@ -256,6 +264,16 @@
                 var label = $("<span/>").addClass(className.label).appendTo(cell);
                 label.css({"background-color": module.formatter.hex(colors[i])});
               }
+            },
+
+            full: function () {
+              var container      = $('<div/>').addClass('container').appendTo($container);
+              var colorSelection = $('<div/>').addClass('color selection').appendTo(container);
+              var hueSelection   = $('<div/>').addClass('hue selection').appendTo(container);
+              var alphaSelection = $('<div/>').addClass('alpha selection').appendTo(container);
+
+              $container.find('.color.selection').css({"background-color": module.formatter.rgb(module.get.color())});
+              $container.find('.alpha.selection').css({"background-color": module.formatter.rgb(module.get.color())});
             }
           },
 
@@ -297,6 +315,7 @@
               $container.on('mouseup' + eventNamespace, module.event.mouseup);
               $container.on('touchend' + eventNamespace, module.event.mouseup);
               $container.on('mouseover' + eventNamespace, module.event.mouseover);
+              $container.on('mousemove' + eventNamespace, module.event.mousemove);
               if ($input.length) {
                 $input.on('keydown' + eventNamespace, module.event.keydown);
               } else {
@@ -322,6 +341,35 @@
                 module.set.focusColor(color);
               }
             },
+            mousemove: function (event) {
+              var mousedown = event.buttons === 1;
+              if (mousedown) {
+                var target = $(event.target);
+                if (target.is('.hue.selection')) {
+                  var rect = event.target.getBoundingClientRect();
+                  var relY = event.pageY - rect.top;
+                  module.set.hueFilter(relY / rect.height * 360);
+                }
+                if (target.is('.alpha.selection')) {
+                  var rect = event.target.getBoundingClientRect();
+                  var relX = event.pageX - rect.left;
+                  module.set.alpha(relX / rect.width);
+                }
+                if (target.is('.color.selection')) {
+                  var rect = event.target.getBoundingClientRect();
+                  var relX = event.pageX - rect.left;
+                  var relY = event.pageY - rect.top;
+
+                  var color = module.helper.hsvToRgb(
+                    module.get.hueFilter(),
+                    100 * relX / rect.width,
+                    100 * (1 - (relY / rect.height))
+                  );
+                  color.a   = module.get.color().a;
+                  module.set.color(color);
+                }
+              }
+            },
             mousedown: function (event) {
               if ($input.length) {
                 //prevent the mousedown on the color picker causing the input to lose focus
@@ -345,17 +393,33 @@
 
               var originalTarget = $(event.target),
                   target         = originalTarget;
-              if (!target.data(metadata.color)) {
-                target = target.parent();
-              }
-              var color = target.data(metadata.color);
-              if (color) {
-                module.set.color(color);
-              }
 
-              var hueFilter = originalTarget.data(metadata.hueFilter);
-              if (hueFilter !== undefined) {
-                module.set.hueFilter(hueFilter);
+              var color;
+              if (target.is('.color.selection')) {
+                var rect = event.target.getBoundingClientRect();
+                var relX = event.pageX - rect.left;
+                var relY = event.pageY - rect.top;
+
+                color   = module.helper.hsvToRgb(
+                  module.get.hueFilter(),
+                  100 * relX / rect.width,
+                  100 * (1 - (relY / rect.height))
+                );
+                color.a = module.get.color().a;
+                module.set.color(color);
+              } else {
+                if (!target.data(metadata.color)) {
+                  target = target.parent();
+                }
+                color = target.data(metadata.color);
+                if (color) {
+                  module.set.color(color);
+                }
+
+                var hueFilter = originalTarget.data(metadata.hueFilter);
+                if (hueFilter !== undefined) {
+                  module.set.hueFilter(hueFilter);
+                }
               }
             },
             keydown  : function (event) {
@@ -460,7 +524,7 @@
                     cellColor = undefined;
                   }
                   if (cellColor) {
-                    allColors.push($.extend({}, cellColor, module.helper.toHSL(cellColor)));
+                    allColors.push($.extend({}, cellColor, module.helper.rgbToHSL(cellColor)));
                   }
                 }
               }
@@ -468,7 +532,8 @@
               if (module.get.hueFilter() !== null) {
                 var targetHue = module.get.hueFilter();
                 colors        = allColors.filter(function (color) {
-                  var lowerBounds = module.helper.wrapAround(targetHue - 15 / 360, 1), upperBounds = module.helper.wrapAround(targetHue + 15 / 360, 1);
+                  var lowerBounds = module.helper.wrapAround(targetHue - 15 / 360, 1),
+                      upperBounds = module.helper.wrapAround(targetHue + 15 / 360, 1);
                   return lowerBounds > upperBounds ? color.h > lowerBounds || color.h < upperBounds : color.h > lowerBounds && color.h < upperBounds;
                 });
               } else {
@@ -487,10 +552,39 @@
             },
             grid: function () {
               return settings.type === "grid";
+            },
+            full: function () {
+              return settings.type === "full";
             }
           },
 
           set: {
+            hue         : function (hue) {
+              var hslColor = module.helper.rgbToHSL(module.get.color());
+              if (typeof hue === 'string') {
+                if (hue.startsWith('+')) {
+                  hue = hslColor.h + parseFloat(hue.substring(1));
+                } else if (hue.startsWith('-')) {
+                  hue = hslColor.h - parseFloat(hue.substring(1));
+                } else {
+                  hue = parseFloat(hue);
+                }
+              }
+              console.log(hslColor);
+
+              var color = module.helper.hslToRGB(
+                module.helper.wrapAround(hue, 360),
+                hslColor.s,
+                hslColor.l
+              );
+              color.a   = module.get.color().a;
+              module.set.color(color);
+            },
+            alpha       : function (alpha) {
+              var color = module.get.color();
+              color.a   = alpha;
+              module.set.color(color);
+            },
             color       : function (color, updateInput, fireChange) {
               updateInput = updateInput !== false;
               fireChange  = fireChange !== false;
@@ -513,6 +607,11 @@
               module.set.dataKeyValue(metadata.color, color);
               if (updateInput && $input.length) {
                 $input.val(text);
+                console.log($icon);
+                if ($icon) {
+                  console.log(module.formatter.hex(color));
+                  $icon.css({"background-color": module.formatter.rgba(color)});
+                }
               }
             },
             focusColor  : function (color) {
@@ -523,8 +622,19 @@
             },
             hueFilter   : function (hue) {
               if (module.set.dataKeyValue(metadata.hueFilter, hue)) {
-                module.reset.colors();
-                module.create.colorpicker();
+                if (module.is.full()) {
+                  // recalculate color
+                  module.set.hue(hue);
+                  var backgroundColor = module.helper.hslToRGB(hue, 1, 0.5);
+
+                  $container.find('.color.selection')
+                    .css({"background-color": module.formatter.rgb(backgroundColor)});
+                  $container.find('.alpha.selection')
+                    .css({"background-color": module.formatter.rgb(backgroundColor)});
+                } else {
+                  module.reset.colors();
+                  module.create.colorpicker();
+                }
               }
             },
             dataKeyValue: function (key, value) {
@@ -545,6 +655,11 @@
           },
 
           helper: {
+            round: function (number, precision) {
+              precision = precision || 2;
+              return number ? Math.round((number + (1 / Math.pow(10, precision + 2))) * Math.pow(10, precision)) / Math.pow(10, precision) : 0;
+            },
+
             wrapAround: function (number, bound) {
               return (number % bound + bound) % bound;
             },
@@ -571,7 +686,53 @@
               return null;
             },
 
-            toHSL: function (color) {
+            hsvToRgb: function (h, s, v) {
+              h = h / 360 * 6;
+              s = s / 100;
+              v = v / 100;
+
+              var i   = Math.floor(h),
+                  f   = h - i,
+                  p   = v * (1 - s),
+                  q   = v * (1 - f * s),
+                  t   = v * (1 - (1 - f) * s),
+                  mod = i % 6,
+                  r   = [v, q, p, p, t, v][mod],
+                  g   = [t, v, v, q, p, p][mod],
+                  b   = [p, p, t, v, v, q][mod];
+
+              return {r: r * 255, g: g * 255, b: b * 255};
+            },
+
+            hslToRGB: function (h, s, l) {
+              var r, g, b;
+
+              h = h / 360;
+
+              function hue2rgb(p, q, t) {
+                if (t < 0) t += 1;
+                if (t > 1) t -= 1;
+                if (t < 1 / 6) return p + (q - p) * 6 * t;
+                if (t < 1 / 2) return q;
+                if (t < 2 / 3) return p + (q - p) * (2 / 3 - t) * 6;
+                return p;
+              }
+
+              if (s === 0) {
+                r = g = b = l; // achromatic
+              }
+              else {
+                var q = l < 0.5 ? l * (1 + s) : l + s - l * s;
+                var p = 2 * l - q;
+                r     = hue2rgb(p, q, h + 1 / 3);
+                g     = hue2rgb(p, q, h);
+                b     = hue2rgb(p, q, h - 1 / 3);
+              }
+
+              return {r: r * 255, g: g * 255, b: b * 255};
+            },
+
+            rgbToHSL: function (color) {
               var r = color.r,
                   g = color.g,
                   b = color.b;
@@ -606,15 +767,15 @@
           formatter: {
             hex : function (color) {
               return ("#" +
-                color.r.toString(16).padStart(2, '0') +
-                color.g.toString(16).padStart(2, '0') +
-                color.b.toString(16).padStart(2, '0')).toUpperCase();
+                Math.round(color.r).toString(16).padStart(2, '0') +
+                Math.round(color.g).toString(16).padStart(2, '0') +
+                Math.round(color.b).toString(16).padStart(2, '0')).toUpperCase();
             },
             rgb : function (color) {
-              return "rgba(" + color.r + ", " + color.g + ", " + color.b + ")";
+              return "rgba(" + Math.round(color.r) + ", " + Math.round(color.g) + ", " + Math.round(color.b) + ")";
             },
             rgba: function (color) {
-              return "rgba(" + color.r + ", " + color.g + ", " + color.b + ", " + (color.a || 0) + ")";
+              return "rgba(" + Math.round(color.r) + ", " + Math.round(color.g) + ", " + Math.round(color.b) + ", " + module.helper.round(color.a) + ")";
             }
           },
 
@@ -823,6 +984,7 @@
     on    : null,   // when to show the popup (defaults to 'focus' for input, 'click' for others)
     format: 'hex',  // format of the output color
                     // supported: 'hex', 'rgb', 'rgba', function(color) {}
+    alpha : false,  // alpha supported
 
     // popup options ('popup', 'on', 'hoverable', and show/hide callbacks are overridden)
     popupOptions: {
@@ -886,6 +1048,7 @@
     selector: {
       popup    : '.ui.popup',
       input    : 'input',
+      icon     : '.input > .ui.label',
       activator: 'input',
       cell     : '.link'
     }

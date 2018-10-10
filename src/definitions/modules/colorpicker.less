@@ -41,7 +41,7 @@
           Hue Filter
 ********************************/
 
-.ui.colorpicker .ui.popup .hue.selection {
+.ui.colorpicker .ui.popup .hue.filter {
   min-width: 336px;
 }
 
@@ -100,4 +100,56 @@
 
 .ui.colorpicker .scrolling.container .ui.menu .color.name {
   font-weight: bold;
+}
+
+/*******************************
+            Full
+*******************************/
+.ui.colorpicker .ui.popup .container {
+  width: 256px;
+}
+
+.ui.colorpicker .ui.popup .color.selection {
+  display: inline-block;
+  width: 232px;
+  height: 232px;
+  position: relative;
+  cursor: crosshair;
+}
+
+.ui.colorpicker .ui.popup .color.selection:after {
+  content: '';
+  pointer-events: none;
+  background: url(@gradientOverlay) no-repeat;
+  background-size: 100% 100%;
+  position: absolute;
+  width: 100%;
+  height: 100%;
+}
+
+.ui.colorpicker .ui.popup .hue.selection {
+  display: inline-block;
+  width: 16px;
+  height: 232px;
+  background: url(@hueOverlay) no-repeat;
+  background-size: 100% 100%;
+  margin-left: 8px;
+  cursor: crosshair;
+}
+
+.ui.colorpicker .ui.popup .alpha.selection {
+  display: block;
+  position: relative;
+  width: 232px;
+  height: 16px;
+  cursor: crosshair;
+}
+
+.ui.colorpicker .ui.popup .alpha.selection:before {
+  content: '';
+  pointer-events: none;
+  background: url(@transparentOverlay);
+  position: absolute;
+  width: 100%;
+  height: 100%;
 }

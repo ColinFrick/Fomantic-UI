@@ -7,3 +7,7 @@
 
 @borderWidth: 1px;
 @border: @borderWidth solid @borderColor;
+
+@gradientOverlay: "@{imagePath}/colorpicker-overlay.svg";
+@hueOverlay: "@{imagePath}/colorpicker-hue.svg";
+@transparentOverlay: "@{imagePath}/colorpicker-transparent.svg";
