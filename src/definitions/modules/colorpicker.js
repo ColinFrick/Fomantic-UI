@@ -214,7 +214,7 @@
             },
 
             list: function () {
-              var colors = module.get.colors();
+              var colors = module.get.colors(true);
               if (colors === undefined || !$.isArray(colors) || colors.length === 0) {
                 module.error(error.emptyColors);
                 return;
@@ -242,7 +242,7 @@
             },
 
             grid: function () {
-              var colors = module.get.colors();
+              var colors = module.get.colors(true);
               if (colors === undefined || !$.isArray(colors) || colors.length === 0) {
                 module.error(error.emptyColors);
                 return;
@@ -429,7 +429,7 @@
 
               if (module.popup('is visible')) {
                 if (event.keyCode === 37 || event.keyCode === 38 || event.keyCode === 39 || event.keyCode === 40) { //arrow keys
-                  var colors     = module.get.colors(),
+                  var colors     = module.get.colors(true),
                       colorCount = colors.length,
                       focusColor = module.get.focusColor() || module.get.color(),
                       index      = colors.indexOf(focusColor),
@@ -503,7 +503,7 @@
             hueFilter : function () {
               return $module.data(metadata.hueFilter) !== undefined ? $module.data(metadata.hueFilter) : null;
             },
-            colors    : function () {
+            colors    : function (applyFilter) {
               if (allColors === undefined) {
                 allColors = [];
 
@@ -524,12 +524,12 @@
                     cellColor = undefined;
                   }
                   if (cellColor) {
-                    allColors.push($.extend({}, cellColor, module.helper.rgbToHSL(cellColor)));
+                    allColors.push($.extend({}, cellColor, module.helper.rgbToHSL(cellColor), {lab: module.helper.rgbToLAB(cellColor)}));
                   }
                 }
               }
 
-              if (module.get.hueFilter() !== null) {
+              if (applyFilter && module.get.hueFilter() !== null) {
                 var targetHue = module.get.hueFilter();
                 colors        = allColors.filter(function (color) {
                   var lowerBounds = module.helper.wrapAround(targetHue - 15 / 360, 1),
@@ -570,7 +570,6 @@
                   hue = parseFloat(hue);
                 }
               }
-              console.log(hslColor);
 
               var color = module.helper.hslToRGB(
                 module.helper.wrapAround(hue, 360),
@@ -607,9 +606,7 @@
               module.set.dataKeyValue(metadata.color, color);
               if (updateInput && $input.length) {
                 $input.val(text);
-                console.log($icon);
                 if ($icon) {
-                  console.log(module.formatter.hex(color));
                   $icon.css({"background-color": module.formatter.rgba(color)});
                 }
               }
@@ -761,6 +758,54 @@
               }
 
               return {h: h, s: s, l: l};
+            },
+
+            rgbToLAB: function (color) {
+              var r = color.r,
+                  g = color.g,
+                  b = color.b,
+                  x, y, z;
+
+              r /= 255, g /= 255, b /= 255;
+              r = (r > 0.04045) ? Math.pow((r + 0.055) / 1.055, 2.4) : r / 12.92;
+              g = (g > 0.04045) ? Math.pow((g + 0.055) / 1.055, 2.4) : g / 12.92;
+              b = (b > 0.04045) ? Math.pow((b + 0.055) / 1.055, 2.4) : b / 12.92;
+
+              x = (r * 0.4124 + g * 0.3576 + b * 0.1805) / 0.95047;
+              y = (r * 0.2126 + g * 0.7152 + b * 0.0722) / 1.00000;
+              z = (r * 0.0193 + g * 0.1192 + b * 0.9505) / 1.08883;
+
+              x = (x > 0.008856) ? Math.pow(x, 1 / 3) : (7.787 * x) + 16 / 116;
+              y = (y > 0.008856) ? Math.pow(y, 1 / 3) : (7.787 * y) + 16 / 116;
+              z = (z > 0.008856) ? Math.pow(z, 1 / 3) : (7.787 * z) + 16 / 116;
+
+              return {
+                l: (116 * y) - 16,
+                a: 500 * (x - y),
+                b: 200 * (y - z)
+              };
+            },
+
+            deltaE: function (labA, labB) {
+              if(labA === labB) {
+                return 0;
+              }
+
+              var deltaL     = labA.l - labB.l;
+              var deltaA     = labA.a - labB.a;
+              var deltaB     = labA.b - labB.b;
+              var c1         = Math.sqrt(labA.a * labA.a + labA.b * labA.b);
+              var c2         = Math.sqrt(labB.a * labB.a + labB.b * labB.b);
+              var deltaC     = c1 - c2;
+              var deltaH     = deltaA * deltaA + deltaB * deltaB - deltaC * deltaC;
+              deltaH         = deltaH < 0 ? 0 : Math.sqrt(deltaH);
+              var sc         = 1.0 + 0.045 * c1;
+              var sh         = 1.0 + 0.015 * c1;
+              var deltaLKlsl = deltaL / (1.0);
+              var deltaCkcsc = deltaC / (sc);
+              var deltaHkhsh = deltaH / (sh);
+              var i          = deltaLKlsl * deltaLKlsl + deltaCkcsc * deltaCkcsc + deltaHkhsh * deltaHkhsh;
+              return i < 0 ? 0 : Math.sqrt(i);
             }
           },
 
@@ -776,6 +821,23 @@
             },
             rgba: function (color) {
               return "rgba(" + Math.round(color.r) + ", " + Math.round(color.g) + ", " + Math.round(color.b) + ", " + module.helper.round(color.a) + ")";
+            },
+            name: function (color) {
+              if (color.a === 0) {
+                return "transparent";
+              } else if (color.a < 1) {
+                return false;
+              }
+              var lab = module.helper.rgbToLAB(color);
+
+              var matchingColors = module.get.colors(false)
+                .map(function (color) {
+                  return {color: color, match: module.helper.deltaE(lab, color.lab)};
+                })
+                .sort(function (a, b) {
+                  return a.match - b.match;
+                });
+              return module.formatter.hex(color) + ": " + matchingColors[0].color.name;
             }
           },
 
