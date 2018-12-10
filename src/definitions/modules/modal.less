@@ -28,8 +28,6 @@
   z-index: @zIndex;
   text-align: left;
 
-  position: relative;
-
   background: @background;
   border: @border;
   box-shadow: @boxShadow;
@@ -116,6 +114,7 @@
 .ui.modal > .image.content {
   display: flex;
   flex-direction: row;
+  flex-wrap: wrap;
 }
 
 /* Image */
@@ -124,12 +123,13 @@
   flex: 0 1 auto;
   width: @imageWidth;
   align-self: @imageVerticalAlign;
+  max-width: 100%;
 }
 .ui.modal > [class*="top aligned"] {
-  align-self: top;
+  align-self: start;
 }
 .ui.modal > [class*="middle aligned"] {
-  align-self: middle;
+  align-self: center;
 }
 .ui.modal > [class*="stretched"] {
   align-self: stretch;
@@ -172,6 +172,9 @@
 }
 .ui.modal .actions > .button {
   margin-left: @buttonDistance;
+}
+.ui.basic.modal > .actions {
+  border-top:none;
 }
 
 /*-------------------
@@ -303,6 +306,7 @@
 .ui.basic.modal > .close {
   top: @basicModalCloseTop;
   right: @basicModalCloseRight;
+  color: @basicInnerCloseColor;
 }
 
 .ui.inverted.dimmer > .basic.modal {
@@ -313,25 +317,19 @@
 }
 
 /* Resort to margin positioning if legacy */
-.ui.legacy.modal,
-.ui.legacy.page.dimmer > .ui.modal {
-  top: 50%;
-  left: 50%;
+.ui.legacy.legacy.modal,
+.ui.legacy.legacy.page.dimmer > .ui.modal {
+  top: 50% !important;
+  left: 50% !important;
 }
 
-.ui.legacy.page.dimmer > .ui.scrolling.modal,
-.ui.page.dimmer > .ui.scrolling.legacy.modal,
-.ui.top.aligned.legacy.page.dimmer > .ui.modal,
-.ui.top.aligned.dimmer > .ui.legacy.modal {
-  top: auto;
+.ui.legacy.legacy.page.dimmer > .ui.scrolling.modal,
+.ui.page.dimmer > .ui.scrolling.legacy.legacy.modal,
+.ui.top.aligned.legacy.legacy.page.dimmer > .ui.modal,
+.ui.top.aligned.dimmer > .ui.legacy.legacy.modal {
+  top: auto !important;
 }
 
-/* Tablet and Mobile */
-@media only screen and (max-width : @largestTabletScreen) {
-  .ui.basic.modal > .close {
-    color: @basicInnerCloseColor;
-  }
-}
 
 
 /*******************************
@@ -385,13 +383,11 @@
 }
 .scrolling.dimmable > .dimmer {
   justify-content: flex-start;
+  position: fixed;
 }
 .scrolling.dimmable.dimmed > .dimmer {
   overflow: auto;
   -webkit-overflow-scrolling: touch;
-}
-.scrolling.dimmable > .dimmer {
-  position: fixed;
 }
 .modals.dimmer .ui.scrolling.modal {
   margin: @scrollingMargin auto;
@@ -426,9 +422,6 @@
   left: @fullScreenOffset !important;
   margin: @fullScreenMargin;
 }
-.ui.fullscreen.scrolling.modal {
-  left: 0em !important;
-}
 .ui.fullscreen.modal > .header {
   padding-right: @closeHitbox;
 }
@@ -437,8 +430,9 @@
   right: @innerCloseRight;
   color: @innerCloseColor;
 }
-
-
+.ui.basic.fullscreen.modal > .close {
+  color: @basicInnerCloseColor;
+}
 /*--------------
       Size
 ---------------*/
@@ -484,9 +478,9 @@
   }
 }
 
-/* mini */
-.ui.small.modal > .header:not(.ui) {
-  font-size: @miniHeaderSize;
+/* Tiny */
+.ui.tiny.modal > .header:not(.ui) {
+  font-size: @tinyHeaderSize;
 }
 
 /* Tiny Modal Width */
@@ -592,6 +586,42 @@
     margin: @largeWidescreenMonitorMargin;
   }
 }
+
+/*****************************
+          Inverted
+*******************************/
+
+.ui.inverted.modal {
+  background: @invertedBackground;
+}
+
+.ui.inverted.modal > .header,
+.ui.inverted.modal > .content {
+  background: @invertedBackground;
+  color: @invertedHeaderColor;
+}
+
+.ui.inverted.modal > .actions {
+  background: @invertedActionBackground;
+  border-top: @invertedActionBorder;
+}
+
+.ui.inverted.dimmer > .modal > .close {
+  color: @invertedDimmerCloseColor;
+}
+
+
+@media only screen and (max-width: @largestTabletScreen) {
+  .ui.dimmer .inverted.modal > .close {
+    color: @invertedCloseColor;
+  }
+}
+
+.ui.inverted.fullscreen.modal > .close {
+  color: @invertedCloseColor;
+}
+
+
 
 
 .loadUIOverrides();

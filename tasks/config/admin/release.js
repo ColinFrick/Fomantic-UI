@@ -91,6 +91,7 @@ module.exports = {
     'message',
     'modal',
     'nag',
+    'placeholder',
     'popup',
     'progress',
     'rail',
@@ -108,6 +109,7 @@ module.exports = {
     'sticky',
     'tab',
     'table',
+    'toast',
     'transition',
     'visibility'
   ]

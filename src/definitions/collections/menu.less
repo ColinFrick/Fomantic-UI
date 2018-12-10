@@ -313,14 +313,10 @@
 ---------------*/
 
 .ui.menu .item > .label {
-  background: @labelBackground;
-  color: @labelTextColor;
   margin-left: @labelTextMargin;
   padding: @labelVerticalPadding @labelHorizontalPadding;
 }
 .ui.vertical.menu .item > .label {
-  background: @labelBackground;
-  color: @labelTextColor;
   margin-top: @labelOffset;
   margin-bottom: @labelOffset;
   padding: @labelVerticalPadding @labelHorizontalPadding;
@@ -328,7 +324,10 @@
 .ui.menu .item > .floating.label {
   padding: @labelVerticalPadding @labelHorizontalPadding;
 }
-
+.ui.menu .item > .label:not(.primary):not(.secondary):not(.red):not(.orange):not(.yellow):not(.olive):not(.green):not(.teal):not(.blue):not(.violet):not(.purple):not(.pink):not(.brown):not(.grey):not(.black) {
+  background: @labelBackground;
+  color: @labelTextColor;
+}
 /*--------------
      Images
 ---------------*/
@@ -927,6 +926,9 @@ Floated Menu / Item
   padding: @secondaryPointingItemVerticalPadding @secondaryPointingItemHorizontalPadding;
   border-bottom-width: @secondaryPointingBorderWidth;
   transition: @secondaryItemTransition;
+}
+.ui.secondary.pointing.menu .ui.dropdown .menu .item {
+  border-bottom-width: 0;
 }
 
 /* Item Types */
@@ -1827,6 +1829,10 @@ Floated Menu / Item
   border-top: @arrowBorder;
   border-right: @arrowBorder;
 }
+.ui.pointing.menu .ui.dropdown .menu .item:after,
+.ui.vertical.pointing.menu .ui.dropdown .menu .item:after {
+  display: none;
+}
 
 /* Active */
 .ui.pointing.menu .active.item:after {
@@ -1863,7 +1869,43 @@ Floated Menu / Item
   background-color: @arrowVerticalSubMenuColor;
 }
 
-
+/* Inverted Colors */
+.ui.inverted.pointing.menu .red.active.item:after {
+  background-color: @red !important;
+}
+.ui.inverted.pointing.menu .orange.active.item:after {
+  background-color: @orange !important;
+}
+.ui.inverted.pointing.menu .yellow.active.item:after {
+  background-color: @yellow !important;
+}
+.ui.inverted.pointing.menu .olive.active.item:after {
+  background-color: @olive !important;
+}
+.ui.inverted.pointing.menu .green.active.item:after {
+  background-color: @green !important;
+}
+.ui.inverted.pointing.menu .teal.active.item:after {
+  background-color: @teal !important;
+}
+.ui.inverted.pointing.menu .blue.active.item:after {
+  background-color: @blue !important;
+}
+.ui.inverted.pointing.menu .violet.active.item:after {
+  background-color: @violet !important;
+}
+.ui.inverted.pointing.menu .purple.active.item:after {
+  background-color: @purple !important;
+}
+.ui.inverted.pointing.menu .pink.active.item:after {
+  background-color: @pink !important;
+}
+.ui.inverted.pointing.menu .brown.active.item:after {
+  background-color: @brown !important;
+}
+.ui.inverted.pointing.menu .grey.active.item:after {
+  background-color: @grey !important;
+}
 
 /*--------------
     Attached

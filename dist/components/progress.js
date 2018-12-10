@@ -1,5 +1,5 @@
 /*!
- * # Semantic UI 2.5.0 - Progress
+ * # Semantic UI 2.6.4 - Progress
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -17,14 +17,6 @@ window = (typeof window != 'undefined' && window.Math == Math)
   : (typeof self != 'undefined' && self.Math == Math)
     ? self
     : Function('return this')()
-;
-
-var
-  global = (typeof window != 'undefined' && window.Math == Math)
-    ? window
-    : (typeof self != 'undefined' && self.Math == Math)
-      ? self
-      : Function('return this')()
 ;
 
 $.fn.progress = function(parameters) {

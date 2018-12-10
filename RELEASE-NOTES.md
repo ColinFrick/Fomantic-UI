@@ -1,13 +1,100 @@
 ## RELEASE NOTES
 
+### Version 2.6.4 - November 15, 2018
+
+**Enhancements**
+- **Progress** - Display dark text on inverted backgrounds **Thanks [@lubber-de](https://github.com/lubber-de)** [#196](https://github.com/fomantic/Fomantic-UI/pull/196)
+- **Calendar** - Add ability to disable days of the week **Thanks [@prudho](https://github.com/prudho)** [#199](https://github.com/fomantic/Fomantic-UI/pull/199)
+- **Calendar** - Added ability to disable specific date(s) **Thanks [@exoego](https://github.com/exoego)** [#211](https://github.com/fomantic/Fomantic-UI/pull/211)
+- **Dimmer** - Added support for using dimmers partially on top, center and bottom **Thanks [@lubber-de](https://github.com/lubber-de)** [#186](https://github.com/fomantic/Fomantic-UI/pull/186)
+- **Item** - Added inverted variant **Thanks [@lubber-de](https://github.com/lubber-de)** [#232](https://github.com/fomantic/Fomantic-UI/pull/232)
+- **Statistic** - Added stackable variation **Thanks [@prudho](https://github.com/prudho)** [#237](https://github.com/fomantic/Fomantic-UI/pull/237)
+- **Popup** - Add size and basic variation to none javascript popup **Thanks [@prudho](https://github.com/prudho)** [#202](https://github.com/fomantic/Fomantic-UI/pull/202)
+
+**Bugs**
+- **Dimmer** - Fixed inverted dimmer text color **Thanks [@lubber-de](https://github.com/lubber-de)** [#187](https://github.com/fomantic/Fomantic-UI/pull/187)
+- **Popup** - Fixed the method used to check for svg support **Thanks [@lubber-de](https://github.com/lubber-de)** [#192](https://github.com/fomantic/Fomantic-UI/pull/192)
+- **Dropdown** - Fixed issue causing multi select dropdowns being pushed down **Thanks [@lubber-de](https://github.com/lubber-de)** [#195](https://github.com/fomantic/Fomantic-UI/pull/195)
+- **Dropdown** - Fixed issue making dropdowns open/close bubbling on key select **Thanks [@lubber-de](https://github.com/lubber-de)** [#190](https://github.com/fomantic/Fomantic-UI/pull/190)
+- **Dropdown** - Fixed dropdown listening to events when not open **Thanks [@lubber-de](https://github.com/lubber-de)** [#188](https://github.com/fomantic/Fomantic-UI/pull/188)
+- **Dropdown** - Fixed issue with `showOnFocus: false` preventing click to open dropdown **Thanks [@lubber-de](https://github.com/lubber-de)** [#193](https://github.com/fomantic/Fomantic-UI/pull/193)
+- **Dropdown** - Fixed IE11 submenu selection triggered menu opening **Thanks [@lubber-de](https://github.com/lubber-de)** [#189](https://github.com/fomantic/Fomantic-UI/pull/189)
+- **Dropdown** - Fixed issue with `simple dropdown` preventing submenu items from being clicked **Thanks [@lubber-de](https://github.com/lubber-de)** [#203](https://github.com/fomantic/Fomantic-UI/pull/203)
+- **Dropdown** - Fixed issue preventing user additions from being cleared when using `clearable` **Thanks [@lubber-de](https://github.com/lubber-de)** [#244](https://github.com/fomantic/Fomantic-UI/pull/244)
+- **Dropdown** - Fixed issue allowing users to select dropdown text incorrectly **Thanks [@lubber-de](https://github.com/lubber-de)** [#246](https://github.com/fomantic/Fomantic-UI/pull/246)
+- **Segment** - Fixed issue with colored inverted segments not being raised **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#206](https://github.com/fomantic/Fomantic-UI/pull/206)
+- **Menu** - Fixed pointing menu arrows not being colored in inverted colored menus **Thanks [@exoego](https://github.com/exoego)** [#204](https://github.com/fomantic/Fomantic-UI/pull/204)
+- **Menu** - Fixed dropdown inside menus not reflecting correct styling **Thanks [@exoego](https://github.com/exoego)** [#218](https://github.com/fomantic/Fomantic-UI/pull/218)
+- **Modal** - Fixed issue making large content images from going out of the modal content **Thanks [@lubber-de](https://github.com/lubber-de)** [#209](https://github.com/fomantic/Fomantic-UI/pull/209)
+- **Modal** - Fixed inverted modals having incorrect close icon color **Thanks [@lubber-de](https://github.com/lubber-de)** [#208](https://github.com/fomantic/Fomantic-UI/pull/208)
+- **Icons** - Fixed corner icon size in icon headers **Thanks [@exoego](https://github.com/exoego)** [#212](https://github.com/fomantic/Fomantic-UI/pull/212)
+- **Icons** - Fixed icon alignment **Thanks [@exoego](https://github.com/exoego)** [#229](https://github.com/fomantic/Fomantic-UI/pull/229)
+- **List** - Fixed an issue making lists ignore `data-value` **Thanks [@lubber-de](https://github.com/lubber-de)** [#224](https://github.com/fomantic/Fomantic-UI/pull/224)
+- **List** - Fixed issue with icons and wrapped images not being inline and wrapped or wrongly aligned **Thanks [@lubber-de](https://github.com/lubber-de)** [#242](https://github.com/fomantic/Fomantic-UI/pull/242)
+- **Form** - Fixed dropdown widths being incorrect when inside a form **Thanks [@exoego](https://github.com/exoego)** [#238](https://github.com/fomantic/Fomantic-UI/pull/238)
+
+### Version 2.6.3 - October 18, 2018
+
+**Enhancements**
+- **Calendar** - Added ability to set `minDate` and `maxDate` via HTML attributes **Thanks [@prudho](https://github.com/prudho)** [#177](https://github.com/fomantic/Fomantic-UI/pull/177)
+- **Calendar** - Added ability to disable a calendar **Thanks [@prudho](https://github.com/prudho)** [#176](https://github.com/fomantic/Fomantic-UI/pull/176)
+- **Icons** - Updated to FontAwesome 5.4.1 **Thanks [@hammy2899](https://github.com/hammy2899)** [#166](https://github.com/fomantic/Fomantic-UI/issues/166)
+- **Toast** - Added color variants **Thanks [@lubber-de](https://github.com/lubber-de)** [#170](https://github.com/fomantic/Fomantic-UI/pull/170)
+- **Toast** - Added progress bar support **Thanks [@lubber-de](https://github.com/lubber-de)** [#139](https://github.com/fomantic/Fomantic-UI/pull/139)
+- **Toast** - Added icon support **Thanks [@lubber-de](https://github.com/lubber-de)** [#139](https://github.com/fomantic/Fomantic-UI/pull/139)
+- **Toast** - Added close icon support **Thanks [@lubber-de](https://github.com/lubber-de)** [#139](https://github.com/fomantic/Fomantic-UI/pull/139)
+- **Toast** - Added stacking animation support **Thanks [@lubber-de](https://github.com/lubber-de)** [#139](https://github.com/fomantic/Fomantic-UI/pull/139)
+- **Modal** - Added inverted variant **Thanks [@lubber-de](https://github.com/lubber-de)** [#108](https://github.com/fomantic/Fomantic-UI/issues/108)
+- **Form** - Added better transparent input and textarea errors **Thanks [@lubber-de](https://github.com/lubber-de)** [#107](https://github.com/fomantic/Fomantic-UI/issues/107)
+- **Form** - Added inverted textarea variation **Thanks [@lubber-de](https://github.com/lubber-de)** [#161](https://github.com/fomantic/Fomantic-UI/pull/161)
+- **Dimmer** - Added intensity variations `very light`, `light` and `medium` **Thanks [@lubber-de](https://github.com/lubber-de)** [#162](https://github.com/fomantic/Fomantic-UI/pull/162)
+
+**Bugs**
+- **Icons** - Fixed corner position when using some icons within a group **Thanks [@prudho](https://github.com/prudho)** [#183](https://github.com/fomantic/Fomantic-UI/pull/183)
+- **Header** - Fixed top attached headers having no top border when content was above them **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#180](https://github.com/fomantic/Fomantic-UI/issues/180)
+- **Dropdown** - Fixed some issues with clearable dropdowns due to the SUI implementation **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#171](https://github.com/fomantic/Fomantic-UI/issues/171)
+- **Dropdown** - Fixed an issue with clearable dropdowns not getting enabled correctly **Thanks [@prudho](https://github.com/prudho)** [#155](https://github.com/fomantic/Fomantic-UI/pull/155)
+- **Dropdown** - Fixed an issue with searchable dropdowns reopening after an option is selected **Thanks [@lubber-de](https://github.com/lubber-de)** [#153](https://github.com/fomantic/Fomantic-UI/issues/153)
+- **Button** - Fixed some issues with buttons due to LESS support **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#175](https://github.com/fomantic/Fomantic-UI/pull/175)
+- **Toast** - Fixed top and bottom center positions with scrolling pages **Thanks [@lubber-de](https://github.com/lubber-de)** [#167](https://github.com/fomantic/Fomantic-UI/pull/167)
+- **Progress** - Fixed a performance issue with the animation **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#2316](https://github.com/Semantic-Org/Semantic-UI/issues/2316)
+- **Placeholder** - Fixed an issue with transition hide not working **Thanks [@lubber-de](https://github.com/lubber-de)** [#6608](https://github.com/Semantic-Org/Semantic-UI/issues/6608)
+
+The following changes where merged from a new Semantic-UI release
+
+- **Embed** - Embed will now correctly remove DOM metadata on `destroy`
+- **Grid** - Fix issue with `very relaxed vertically divided grid` having wrong margins on dividers
+
+### Version 2.6.2 - October 2, 2018
+
+**Critical Bugs**
+- **Build Tools** - Reverted the gulp 4 update since it broke the npm install **Thanks [@hammy2899](https://github.com/hammy2899)** [#145](https://github.com/fomantic/Fomantic-UI/issues/145)
+
+### Version 2.6.1 - October 2, 2018
+
+**Bugs**
+- **Icon** - Fixed comments icon from conflicting while inside comments component **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#133](https://github.com/fomantic/Fomantic-UI/pull/133)
+- **Modal** - Fixed fullscreen modal from being stuck to the left of the screen **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#135](https://github.com/fomantic/Fomantic-UI/pull/135)
+- **Modal** - Fixed fullscreen modals not working in IE11 **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#136](https://github.com/fomantic/Fomantic-UI/pull/136)
+- **Dropdown** - Fixed clearable icon from appearing on top of text in searchable dropdowns **Thanks [@lubber-de](https://github.com/lubber-de)** [#143](https://github.com/fomantic/Fomantic-UI/pull/143)
+- **Dropdown** - Fixed searchable dropdowns from losing focus after an option is selected **Thanks [@lubber-de](https://github.com/lubber-de)** [#143](https://github.com/fomantic/Fomantic-UI/pull/143)
+
+**Build Tools**
+- Changed bower and composer package names from Semantic to Fomantic **Thanks [@salaros](https://github.com/salaros)** [#140](https://github.com/fomantic/Fomantic-UI/pull/140)
+- Updated build process to use gulp 4 which removes dependency vulnerabilities **Thanks [@acconrad](https://github.com/acconrad) [#6566](https://github.com/Semantic-Org/Semantic-UI/pull/6566)
+
 ### Version 2.6.0 - September 18, 2018
 
-> Reason behind version jump: The new 2.6 release might look a little funny since we just released 2.5 but we thought it was necessary to bump a minor patch since the new SUI release introducing a new component and we want to stick to the SUI versioning scheme.
+> Reason behind version jump: The new 2.6 release might look a little funny since we just released 2.5 but we thought it was necessary to bump a minor patch since the new SUI release introducing a new component and we want to stick to the SUI versioning scheme. We also added the new toast component so we didn't have to wait until the next feature release.
+
+**New Components**
+- **Toast** - Added a new toast component **Thanks [@prudho](https://github.com/prudho)** [#122](https://github.com/fomantic/Fomantic-UI/pull/122)
 
 **Bugs**
 - **Header** - Fixed header content not being displayed when in an accordion element **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#103](https://github.com/fomantic/Fomantic-UI/pull/103)
 - **Menu** - Fixed inconsistent icon spacing in dropdown menus **Thanks [@prudho](https://github.com/prudho)** [#111](https://github.com/fomantic/Fomantic-UI/pull/111)
 - **Checkbox** - Fixed `before(Un)Checked` firing on init **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#115](https://github.com/fomantic/Fomantic-UI/pull/115)
+- **Message** - Fixed colored floating messages not having box shadow **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#124](https://github.com/fomantic/Fomantic-UI/pull/124)
 
 **Enhancements**
 - **Calendar** - Added support for `showWeekNumbers` to show the week number on the left of the calendar **Thanks [@lubber-de](https://github.com/lubber-de)** [#113](https://github.com/fomantic/Fomantic-UI/pull/113)
@@ -86,7 +173,7 @@ The following changes where merged from a new Semantic-UI release
 - **Dropdown** - Fixed pointing menu pointer still shown after menu is collapsed **Thanks [@prudho](https://github.com/prudho)** [#70](https://github.com/fomantic/Fomantic-UI/pull/70)
 - **Icon** - Fixed icon group margin when inside a button **Thanks [@prudho](https://github.com/prudho)** [#68](https://github.com/fomantic/Fomantic-UI/pull/68)
 - **Icon** - Fixed icon group position when inside of menu items **Thanks [@prudho](https://github.com/prudho)** [#6491](https://github.com/Semantic-Org/Semantic-UI/issues/6491)
-- **Header** - Fixed incorrect attached header top margin **Thanks [@prudho](https://github.com/prudho)** [#5436](https://github.com/Semantic-Org/Semantic-UI/issues/5436) 
+- **Header** - Fixed incorrect attached header top margin **Thanks [@prudho](https://github.com/prudho)** [#5436](https://github.com/Semantic-Org/Semantic-UI/issues/5436)
 - **Form** - Fixed textarea incorrect font-family **Thanks [@hammy2899](https://github.com/hammy2899)** [#5546](https://github.com/Semantic-Org/Semantic-UI/issues/5546)
 
 ### Version 2.4.3 - July 9, 2018
@@ -139,7 +226,7 @@ The following changes where merged from a new Semantic-UI release
 
 **Enhancements**
 - **Segment** - Added basic segments variation **Thanks shadoWalker89** [#3801](https://github.com/Semantic-Org/Semantic-UI/issues/3801)
-- **Form** - Added ability to add required marker from the label itself **Thanks shadoWalker89** [#6345](https://github.com/Semantic-Org/Semantic-UI/issues/6345) 
+- **Form** - Added ability to add required marker from the label itself **Thanks shadoWalker89** [#6345](https://github.com/Semantic-Org/Semantic-UI/issues/6345)
 - **Form Validation** - Added new option for whether to trim values before validation **Thanks [@prudho](https://github.com/prudho)** [#6237](https://github.com/Semantic-Org/Semantic-UI/issues/6237)
 - **Dropdown** - Added new `sortSelect` option to choose how to sort the dropdown items **Thanks [@ColinFrick](https://github.com/ColinFrick)** [#4775](https://github.com/Semantic-Org/Semantic-UI/issues/4775)
 - **Dropdown** - Added `inverted` variation **Thanks [@hammy2899](https://github.com/hammy2899)** [#5276](https://github.com/Semantic-Org/Semantic-UI/issues/5276)

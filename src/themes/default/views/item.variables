@@ -44,7 +44,7 @@
 @imageDisplay: block;
 @imageFloat: none;
 @imageMaxHeight: '';
-@imageVerticalAlign: top;
+@imageVerticalAlign: start;
 @imageMargin: 0em;
 @imagePadding: 0em;
 @imageBorder: none;
@@ -54,7 +54,7 @@
 
 /* Content */
 @contentDisplay: block;
-@contentVerticalAlign: top;
+@contentVerticalAlign: start;
 
 @contentWidth: auto;
 @contentOffset: 0em;
@@ -65,6 +65,7 @@
 @contentBorder: none;
 @contentBorderRadius: 0em;
 @contentBoxShadow: none;
+@contentColor: @textColor;
 
 /* Header */
 @headerMargin: -@lineHeightOffset 0em 0em;
@@ -109,7 +110,7 @@
 
 /* Content Image */
 @contentImageWidth: '';
-@contentImageVerticalAlign: middle;
+@contentImageVerticalAlign: center;
 
 /* Avatar Image */
 @avatarSize: @contentImageWidth;
@@ -155,3 +156,23 @@
 /* Unstackable */
 @unstackableMobileImageWidth: 125px;
 
+/* Inverted */
+@invertedBackground: @background;
+@invertedContentBackground: @contentBackground;
+@invertedExtraBackground: @extraBackground;
+@invertedHeaderColor: @invertedTextColor;
+@invertedHeaderLinkColor: @invertedHeaderColor;
+@invertedHeaderLinkHoverColor: @invertedHoveredTextColor;
+@invertedMetaLinkColor: @invertedLightTextColor;
+@invertedMetaLinkHoverColor: @invertedTextColor;
+@invertedContentColor: @invertedTextColor;
+@invertedContentLinkColor: lighten(saturate(@linkColor, 30), 25, relative);
+@invertedContentLinkHoverColor: @linkColor;
+@invertedExtraColor: @invertedLightTextColor;
+@invertedDescriptionColor: @invertedTextColor;
+@invertedMetaColor: rgba(255, 255, 255, 0.8);
+@invertedLikeColor: lighten(@likeColor,10);
+@invertedLikeActiveColor: lighten(@likeActiveColor,10);
+@invertedFavoriteColor: lighten(@favoriteColor,10);
+@invertedFavoriteActiveColor: lighten(@favoriteActiveColor,10);
+@invertedDividedBorder: 1px solid @whiteBorderColor;

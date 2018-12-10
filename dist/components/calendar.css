@@ -1,5 +1,5 @@
 /*!
- * # Semantic UI 2.5.0 - Calendar
+ * # Semantic UI 2.6.4 - Calendar
  * http://github.com/semantic-org/semantic-ui/
  *
  *
@@ -75,9 +75,6 @@
 .ui.calendar .ui.table tr th .icon {
   margin: 0;
 }
-.ui.calendar .ui.table tr th .icon {
-  margin: 0;
-}
 .ui.calendar .ui.table tr:first-child th {
   position: relative;
   padding-left: 0;
@@ -108,7 +105,8 @@
   right: 0;
 }
 .ui.calendar .ui.table tr .disabled {
-  pointer-events: none;
+  pointer-events: auto;
+  cursor: default;
   color: rgba(40, 40, 40, 0.3);
 }
 
@@ -131,15 +129,33 @@
   -webkit-box-shadow: none;
           box-shadow: none;
 }
-.ui.calendar .calendar:focus .ui.table tbody tr td.focus,
-.ui.calendar .calendar.active .ui.table tbody tr td.focus {
+.ui.calendar:not(.disabled) .calendar:focus .ui.table tbody tr td.focus,
+.ui.calendar:not(.disabled) .calendar.active .ui.table tbody tr td.focus {
   -webkit-box-shadow: inset 0 0 0 1px #85B7D9;
           box-shadow: inset 0 0 0 1px #85B7D9;
 }
-.ui.calendar .calendar:focus .ui.table.inverted tbody tr td.focus,
-.ui.calendar .calendar.active .ui.table.inverted tbody tr td.focus {
+.ui.calendar:not(.disabled) .calendar:focus .ui.table.inverted tbody tr td.focus,
+.ui.calendar:not(.disabled) .calendar.active .ui.table.inverted tbody tr td.focus {
   -webkit-box-shadow: inset 0 0 0 1px #85B7D9;
           box-shadow: inset 0 0 0 1px #85B7D9;
+}
+
+
+/*******************************
+            States
+*******************************/
+
+
+/*--------------------
+        Disabled
+---------------------*/
+
+.ui.disabled.calendar {
+  opacity: 0.45;
+}
+.ui.disabled.calendar > .input,
+.ui.disabled.calendar .ui.table tr .link {
+  pointer-events: none;
 }
 
 

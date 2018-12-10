@@ -49,6 +49,7 @@
 @contentLineHeight: @itemLineHeight;
 @contentLineHeightOffset: (@contentLineHeight - 1em) / 2;
 @contentVerticalAlign: top;
+@contentColor: @textColor;
 
 /* Header */
 @itemHeaderFontFamily: @headerFont;
@@ -98,6 +99,7 @@
 @invertedDescriptionColor: @invertedLightTextColor;
 @invertedItemLinkColor: @invertedTextColor;
 @invertedItemLinkHoverColor: @linkHoverColor;
+@invertedContentColor: @invertedLightTextColor;
 
 /* Link List */
 @linkListItemColor: @unselectedTextColor;
@@ -201,7 +203,7 @@
 /* Divided */
 @celledBorderWidth: 1px;
 @celledBorder: @celledBorderWidth solid @borderColor;
-@celledInvertedBorder: @dividedBorderWidth solid @whiteBorderColor;
+@celledInvertedBorder: @whiteBorderColor;
 @celledHorizontalPadding: 0.5em;
 @celledChildListBorder: none;
 @celledChildItemBorder: none;

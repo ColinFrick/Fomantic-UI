@@ -9,7 +9,7 @@
 @verticalMargin: 1em;
 @margin: @verticalMargin 0em;
 @textAlign: center;
-@maxWidth: auto;
+@maxWidth: none;
 
 /* Group */
 @horizontalSpacing: 1.5em;
@@ -72,6 +72,10 @@
 /* Item Width */
 @itemGroupMargin: 0em 0em -@rowSpacing;
 @itemMargin: 0em 0em @rowSpacing;
+
+/* Stackable */
+@stackableRowSpacing: 2rem;
+@stackableGutter: 2rem;
 
 /* Size */
 @miniTextValueSize: 1rem;
